@@ -1346,7 +1346,7 @@ background:  rgba(228, 251, 248,0.9);
 nav{
 position:fixed;
 display:flex; 
-top:80px;
+top:100%;
 left:0;
 width:100%;
 background:#E4FBF8;
@@ -1722,12 +1722,18 @@ border-radius:0;
 .logo span{
 font-size:19px;
 }
+nav{
+top:100%;
+left:0;
+width:100%;
+}
 .nav-area{
 display:flex;
 align-items:center;
 gap:4px;
 }
 .hamburger{
+margin-top: 0px;
 display:flex;
 margin-left:2px;
 flex-shrink:0;
@@ -1935,7 +1941,7 @@ gap:30px;
 flex-wrap:nowrap;
 }
 .testimonial-item{
-flex-wrap:nowrap;
+flex:0 0 85%;
 scroll-snap-align:center;
 }
 .testimonial-cards-wrapper::-webkit-scrollbar{
@@ -2747,6 +2753,7 @@ const totalPages = Math.ceil(cards.length / visibleCards);
 totalPagesText.innerText = totalPages.toString().padStart(2,"0");
 
 function updateSlider(){
+  if(window.innerWidth <= 500) return;
   const cardWidth = cards[0].offsetWidth + 30;
   const offset = currentIndex * cardWidth * visibleCards;
 
@@ -2754,7 +2761,25 @@ function updateSlider(){
   pageNumber.innerText = (currentIndex + 1).toString().padStart(2,"0");
 }
 
+const wrapper = document.querySelector(".testimonial-cards-wrapper");
+
+let isScrolling;
+
+wrapper.addEventListener("scroll", () => {
+  clearTimeout(isScrolling);
+
+  isScrolling = setTimeout(() => {
+    const cardWidth = document.querySelector(".testimonial-item").offsetWidth + 30;
+    const index = Math.round(wrapper.scrollLeft / cardWidth);
+
+    currentIndex = index;
+    pageNumber.innerText = (currentIndex + 1).toString().padStart(2,"0");
+  }, 100);
+});
+
 next.addEventListener("click", ()=>{
+    if(window.innerWidth <= 500) return;
+
   if(currentIndex < totalPages - 1){
     currentIndex++;
     updateSlider();
@@ -2762,11 +2787,14 @@ next.addEventListener("click", ()=>{
 });
 
 prev.addEventListener("click", ()=>{
+    if(window.innerWidth <= 500) return;
+
   if(currentIndex > 0){
     currentIndex--;
     updateSlider();
   }
 });
+
 
 
 const faqItems = document.querySelectorAll(".faq-item");
